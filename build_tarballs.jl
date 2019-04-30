@@ -21,8 +21,11 @@ if [[ $target == aarch64-* ]] || [[ $target == arm-* ]] || [[ $target == powerpc
    sed -i s/-march=native// makefile
 fi
 make lib/libfinufft.so LIBRARY_PATH=$prefix/lib/ CPATH=$prefix/include/ LIBS="-lm -L$prefix/lib $LDFLAGS"
-cp lib/libfinufft.so $prefix/lib/
-
+if [[ ${target} == x86_64-apple* ]]; then
+   cp lib/libfinufft.so $prefix/lib/libfinufft.dylib
+else
+   cp lib/libfinufft.so $prefix/lib/
+fi
 """
 
 # These are the platforms we will build for by default, unless further
