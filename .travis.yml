@@ -1,0 +1,39 @@
+language: julia
+os:
+  - linux
+julia:
+  - 1.0
+notifications:
+  email: false
+git:
+  depth: 99999999
+cache:
+  timeout: 1000
+  directories:
+    - downloads
+env:
+  global:
+    - BINARYBUILDER_DOWNLOADS_CACHE=downloads
+    - BINARYBUILDER_AUTOMATIC_APPLE=false
+sudo: required
+
+# Before anything else, get the latest versions of things
+before_script:
+  - julia -e 'using Pkg; pkg"add BinaryProvider"; pkg"add BinaryBuilder#master"; Pkg.build()'
+
+script:
+  - julia build_tarballs.jl
+
+
+deploy:
+    provider: releases
+    api_key:
+        # Note; this api_key is only valid for ludvigak/FINUFFTBuilder; you need
+        # to make your own: https://docs.travis-ci.com/user/deployment/releases/
+        secure: D4fnsDxqnHWjwQ64ljKx86NZ8uiE1fNEbsEaWC8nTp3utTmlLm2JLKU9CF2kXnaQ0rix6YH47jQmbF5XGYVlE1o8K4dNVKllZme+neCssfCSYswApCx20hY/uTV2UeTTSCXR5I/OjQQT4Xah1GDhrccCFqcPuEn88nXcXZ7NFaY59J53XBRi+bhHRgQA2nvKe93tMW0zh3d8hx8yKfazGmkeaL6pyE8/Vqm86PGfMC/X4jvI5vpXbItX9du7gGsGkAiCsNoJ+0wznC/KKBHBqZwuQ+JmdV82jiln+OlgSoyKniK6730GkV787sHLDXBr8FZ1AIg09Y7tV/T1b0XE4iDm+SFuoT1/hnZDy4ENxN2jJES2kkg5B9gug/hXzIQnopGPHKJe09UCuCOapF898QThQeSkXrFY8fzmLSb19GY6gEe4a+T0LamRXZ4idW95LUHZUeUGyy9VSLDTWoOEp1+QlcLgxztVcZiNI6JYIUy+micnm48yjqO2UHjUHZi9pcfPIeXgIUSHpHgwhqXmu6wD8pVtxXNZiMRrKG04dUkf8CC5IvGnLZQBMtTR3p61HDszxVGI764RHlpYopcGr0lP+IZ1euoZqNjM9Q+Y3tqrA9GW1mhkx8BZWuwZ83o7OYXrgC3kyDhYdAhadlD/FVH1aBlEqQIWkX7SJXJSLUA=
+    file_glob: true
+    file: products/*
+    skip_cleanup: true
+    on:
+        repo: ludvigak/FINUFFTBuilder
+        tags: true
