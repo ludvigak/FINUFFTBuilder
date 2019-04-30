@@ -3,7 +3,7 @@
 using BinaryBuilder
 
 name = "FINUFFTBuilder"
-version = v"0.1.0"
+version = v"0.1.2"
 
 # Collection of sources required to build FINUFFTBuilder
 sources = [
@@ -22,7 +22,7 @@ if [[ $target == aarch64-* ]] || [[ $target == arm-* ]] || [[ $target == powerpc
 fi
 make lib/libfinufft.so LIBRARY_PATH=$prefix/lib/ CPATH=$prefix/include/ LIBS="-lm -L$prefix/lib $LDFLAGS"
 if [[ ${target} == x86_64-apple* ]]; then
-   cp lib/libfinufft.so $prefix/lib/libfinufft.dylib
+   cp lib/libfinufft.so $prefix/lib/libfinufft.1.1.1.dylib
 else
    cp lib/libfinufft.so $prefix/lib/
 fi
