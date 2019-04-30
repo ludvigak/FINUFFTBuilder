@@ -23,13 +23,14 @@ if [[ $target == aarch64-* ]] || [[ $target == arm-* ]] || [[ $target == powerpc
    sed -i s/-march=native// makefile
 fi
 # Static libgcc linking for MacOS
-if [[ ${target} == x86_64-apple* ]]; then
-    static="-static-libgcc"
-fi
+#if [[ ${target} == x86_64-apple* ]]; then
+#    static="-static-libgcc -static-libstdc++"
+#fi
 # Compile
 make lib/libfinufft.so LIBRARY_PATH=$prefix/lib/ CPATH=$prefix/include/ LIBS="$static -lm -L$prefix/lib $LDFLAGS"
 # Copy in lib with right suffix
 if [[ ${target} == x86_64-apple* ]]; then
+   cp `g++ --print-file-name=libgomp.dylib` $prefix/lib/libgomp.1.dylib
    cp lib/libfinufft.so $prefix/lib/libfinufft.dylib
 else
    cp lib/libfinufft.so $prefix/lib/
