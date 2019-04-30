@@ -16,13 +16,21 @@ sources = [
 script = raw"""
 cd $WORKSPACE/srcdir	
 cd finufft-1.1.1/
+# Scrub out OMP suffix, since FFTW compiled with --with-combined-threads
 sed -i s/_\$\(FFTWOMPSUFFIX\)// makefile
+# -march=native appears to be Intel-only
 if [[ $target == aarch64-* ]] || [[ $target == arm-* ]] || [[ $target == powerpc* ]]; then
    sed -i s/-march=native// makefile
 fi
-make lib/libfinufft.so LIBRARY_PATH=$prefix/lib/ CPATH=$prefix/include/ LIBS="-lm -L$prefix/lib $LDFLAGS"
+# Static libgcc linking for MacOS
 if [[ ${target} == x86_64-apple* ]]; then
-   cp lib/libfinufft.so $prefix/lib/libfinufft.1.1.1.dylib
+    static="-static-libgcc"
+fi
+# Compile
+make lib/libfinufft.so LIBRARY_PATH=$prefix/lib/ CPATH=$prefix/include/ LIBS="$static -lm -L$prefix/lib $LDFLAGS"
+# Copy in lib with right suffix
+if [[ ${target} == x86_64-apple* ]]; then
+   cp lib/libfinufft.so $prefix/lib/libfinufft.dylib
 else
    cp lib/libfinufft.so $prefix/lib/
 fi
